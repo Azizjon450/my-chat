@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class AuthForm extends StatefulWidget {
-  const AuthForm({super.key});
+  final Function getUserDetails;
+  final bool isLoading;
+  const AuthForm(this.getUserDetails, this.isLoading, {super.key});
 
   @override
   State<AuthForm> createState() => _AuthFormState();
@@ -13,9 +15,16 @@ class _AuthFormState extends State<AuthForm> {
   var _isLogin = true;
 
   void _submit() {
+    FocusScope.of(context).unfocus();
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       print(_userData);
+      widget.getUserDetails(
+        _userData['email']!.trim(),
+        _userData['username']!.trim(),
+        _userData['password']!.trim(),
+        _isLogin,
+      );
     }
   }
 
@@ -30,8 +39,10 @@ class _AuthFormState extends State<AuthForm> {
             child: Form(
               key: _formKey,
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   TextFormField(
+                    key: const ValueKey('email'),
                     decoration:
                         const InputDecoration(labelText: 'Email address'),
                     keyboardType: TextInputType.emailAddress,
@@ -49,6 +60,7 @@ class _AuthFormState extends State<AuthForm> {
                   ),
                   if (!_isLogin)
                     TextFormField(
+                      key: const ValueKey('username'),
                       decoration: const InputDecoration(labelText: 'Username'),
                       validator: (value) {
                         if (value == null ||
@@ -63,6 +75,7 @@ class _AuthFormState extends State<AuthForm> {
                       },
                     ),
                   TextFormField(
+                    key: const ValueKey('password'),
                     decoration: const InputDecoration(labelText: 'Password'),
                     obscureText: true,
                     validator: (value) {
@@ -78,24 +91,27 @@ class _AuthFormState extends State<AuthForm> {
                   const SizedBox(
                     height: 15,
                   ),
-                  ElevatedButton(
-                    onPressed: _submit,
-                    style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all(Colors.deepPurple)),
-                    child: Text(_isLogin ?
-                      'Log In' : 'Sign Up',
-                      style: TextStyle(color: Colors.white),
+                  if (widget.isLoading) const CircularProgressIndicator(),
+                  if (!widget.isLoading)
+                    ElevatedButton(
+                      onPressed: _submit,
+                      style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all(Colors.deepPurple)),
+                      child: Text(
+                        _isLogin ? 'Log In' : 'Sign Up',
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      setState(() {
-                        _isLogin = !_isLogin;
-                      });
-                    },
-                    child: Text(_isLogin ? 'Sign Up' : 'Log In'),
-                  ),
+                  if (!widget.isLoading)
+                    TextButton(
+                      onPressed: () {
+                        setState(() {
+                          _isLogin = !_isLogin;
+                        });
+                      },
+                      child: Text(_isLogin ? 'Sign Up' : 'Log In'),
+                    ),
                 ],
               ),
             ),

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class ChatScreen extends StatelessWidget {
@@ -10,6 +11,29 @@ class ChatScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Text('My Chat'),
+        actions: [
+          DropdownButton(
+              icon: const Icon(Icons.more_vert),
+              items: const [
+                DropdownMenuItem(
+                  value: 'logout',
+                  child: Row(
+                    children: [
+                      Icon(Icons.exit_to_app),
+                      SizedBox(
+                        width: 8,
+                      ),
+                      Text('Exit'),
+                    ],
+                  ),
+                ),
+              ],
+              onChanged: (selectedItem) {
+                if (selectedItem == 'logout') {
+                  FirebaseAuth.instance.signOut();
+                }
+              })
+        ],
       ),
       body: StreamBuilder(
           stream: FirebaseFirestore.instance
