@@ -1,6 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:my_chat/witgets/chat/messages.dart';
+import 'package:my_chat/witgets/chat/new_message.dart';
 
 class ChatScreen extends StatelessWidget {
   const ChatScreen({super.key});
@@ -35,32 +36,11 @@ class ChatScreen extends StatelessWidget {
               })
         ],
       ),
-      body: StreamBuilder(
-          stream: FirebaseFirestore.instance
-              .collection('chats/5sBa51XgivUYJy7ZwJ57/messages')
-              .snapshots(),
-          builder: (ctx, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
-            if (streamSnapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-            final docs = streamSnapshot.data!.docs;
-            return ListView.builder(
-              itemCount: docs.length,
-              itemBuilder: (ctx, index) => Container(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(docs[index]['text']),
-              ),
-            );
-          }),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          FirebaseFirestore.instance
-              .collection('chats/5sBa51XgivUYJy7ZwJ57/messages')
-              .add({'text': 'I\'m new message!'});
-        },
-        child: const Icon(Icons.add),
+      body: Column(
+        children: [
+          Expanded(child: Messages()),
+          NewMessage(),
+        ],
       ),
     );
   }
