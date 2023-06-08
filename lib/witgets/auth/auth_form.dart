@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:my_chat/witgets/pickers/user_image_picker.dart';
 
 class AuthForm extends StatefulWidget {
   final Function getUserDetails;
@@ -12,17 +15,32 @@ class AuthForm extends StatefulWidget {
 class _AuthFormState extends State<AuthForm> {
   final _formKey = GlobalKey<FormState>();
   final _userData = {'email': '', 'username': '', 'password': ''};
+  File? _userImage;
   var _isLogin = true;
+
+  void _getUserImage(File userImage) {
+    _userImage = userImage;
+  }
 
   void _submit() {
     FocusScope.of(context).unfocus();
+    if (_userImage == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor:
+              Colors.black54, //Theme.of(context).colorScheme.error,
+          content: Text('Plase, upload image'),
+        ),
+      );
+      return;
+    }
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      print(_userData);
       widget.getUserDetails(
         _userData['email']!.trim(),
         _userData['username']!.trim(),
         _userData['password']!.trim(),
+        _userImage,
         _isLogin,
       );
     }
@@ -41,6 +59,7 @@ class _AuthFormState extends State<AuthForm> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  if (!_isLogin) UserImagePicker(_getUserImage),
                   TextFormField(
                     key: const ValueKey('email'),
                     decoration:

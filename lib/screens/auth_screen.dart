@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:my_chat/witgets/auth/auth_form.dart';
 
@@ -15,7 +18,7 @@ class _AuthScreenState extends State<AuthScreen> {
   bool _isLoading = false;
 
   void _getUserDetails(String userEmail, String username, String userpassword,
-      bool isLogin) async {
+      File userImage, bool isLogin) async {
     UserCredential userCredetial;
     setState(() {
       _isLoading = true;
@@ -31,10 +34,25 @@ class _AuthScreenState extends State<AuthScreen> {
           email: userEmail,
           password: userpassword,
         );
+
+        final imagePath = FirebaseStorage.instance
+            .ref()
+            .child('user_image')
+            .child('${userCredetial.user!.uid}.jpg');
+        await imagePath.putFile(userImage);
+
+        final imageUrl = await imagePath.getDownloadURL();
+
         FirebaseFirestore.instance
             .collection('users')
             .doc(userCredetial.user!.uid)
-            .set({'username': username, 'email': userEmail});
+            .set(
+          {
+            'username': username,
+            'email': userEmail,
+            'imageUrl': imageUrl,
+          },
+        );
       }
     } on FirebaseException catch (e) {
       var message = 'Sorry, network error, please, try again!';
