@@ -17,7 +17,7 @@ class _UserImagePickerState extends State<UserImagePicker> {
   void _pickImage() async {
     try {
       XFile? image = await ImagePicker().pickImage(
-        source: ImageSource.camera,
+        source: ImageSource.gallery,
         imageQuality: 50,
         maxWidth: 150,
       );
@@ -25,11 +25,9 @@ class _UserImagePickerState extends State<UserImagePicker> {
         return;
       }
       final _pickedImagePath = File(image.path);
-      if (image != null) {
-        setState(() {
-          _pickedImage = _pickedImagePath;
-        });
-      }
+      setState(() {
+        _pickedImage = _pickedImagePath;
+      });
       widget.getUserImage(_pickedImage);
     } catch (error) {
       print("error: $error");

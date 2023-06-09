@@ -3,14 +3,22 @@ import 'package:flutter/material.dart';
 class MessageBubble extends StatelessWidget {
   final String message;
   final String username;
+  final String userImage;
   final bool isMe;
-  const MessageBubble(this.message, this.username, this.isMe, {super.key});
+  const MessageBubble(this.message, this.username, this.userImage, this.isMe,
+      {super.key});
 
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
       children: [
+        if (!isMe)
+          CircleAvatar(
+            backgroundImage: NetworkImage(userImage),
+          ),
+        if(!isMe)
+          const SizedBox(width: 5,),  
         Container(
           width: 150,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -38,6 +46,12 @@ class MessageBubble extends StatelessWidget {
             ],
           ),
         ),
+        if(isMe)
+          const SizedBox(width: 5,),
+        if (isMe)
+          CircleAvatar(
+            backgroundImage: NetworkImage(userImage),
+          ),
       ],
     );
   }

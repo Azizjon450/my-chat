@@ -24,7 +24,7 @@ class _AuthFormState extends State<AuthForm> {
 
   void _submit() {
     FocusScope.of(context).unfocus();
-    if (_userImage == null) {
+    if (_userImage == null && !_isLogin) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           backgroundColor:

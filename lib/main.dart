@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:my_chat/screens/auth_screen.dart';
 import 'package:my_chat/screens/chat_screen.dart';
 
-void main() {
+void main() async {
+  // WidgetsFlutterBinding.ensureInitialized();
+  // await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
@@ -15,6 +17,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     Future<FirebaseApp> _initialization = Firebase.initializeApp();
     return FutureBuilder(
+        //future: Firebase.initializeApp(),
         future: _initialization,
         builder: (ctx, snapshot) {
           return MaterialApp(

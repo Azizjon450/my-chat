@@ -18,7 +18,7 @@ class _AuthScreenState extends State<AuthScreen> {
   bool _isLoading = false;
 
   void _getUserDetails(String userEmail, String username, String userpassword,
-      File userImage, bool isLogin) async {
+      File? userImage, bool isLogin) async {
     UserCredential userCredetial;
     setState(() {
       _isLoading = true;
@@ -39,7 +39,7 @@ class _AuthScreenState extends State<AuthScreen> {
             .ref()
             .child('user_image')
             .child('${userCredetial.user!.uid}.jpg');
-        await imagePath.putFile(userImage);
+        await imagePath.putFile(userImage!);
 
         final imageUrl = await imagePath.getDownloadURL();
 
