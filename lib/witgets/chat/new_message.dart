@@ -44,10 +44,10 @@ class _NewMessageState extends State<NewMessage> {
         'text': _message,
         'timestamp': Timestamp.now(),
         'userId': user.uid,
-        'userImage': userData['imageUrl'],
+        'userImage': userData.data()!['imageUrl'],
         'username': userData.data()!['username'],
       });
-      
+
       _sendNotification(_message);
       _messageController.clear();
     }
