@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class NewMessage extends StatefulWidget {
   NewMessage({super.key});
@@ -44,7 +47,33 @@ class _NewMessageState extends State<NewMessage> {
         'userImage': userData['imageUrl'],
         'username': userData.data()!['username'],
       });
+      
+      _sendNotification(_message);
       _messageController.clear();
+    }
+  }
+
+  void _sendNotification(message) async {
+    final url = Uri.parse('https://fcm.googleapis.com/fcm/send');
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization':
+          'key=AAAAXSd98H0:APA91bFh-LLQZHX2nVyFIzK8ZA1Wva_L_W35VqRKPNukhhVvvxhYCbOEWM2VSOlDMoTwmXzIa7iZRYUqMqLKLxB96joPtjrg4NhsArzdGWOZ7Spl57iaVH2jcyM989VMPpY3jfv94m7i',
+    };
+    final data = {
+      'to': "/topics/flutterchat",
+      'notification': {
+        'title': 'New Notification',
+        'body': message,
+      }
+    };
+
+    try {
+      final response =
+          await http.post(url, headers: headers, body: jsonEncode(data));
+      print(jsonDecode(response.body));
+    } catch (e) {
+      print(e);
     }
   }
 
